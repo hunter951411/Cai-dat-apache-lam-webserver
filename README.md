@@ -142,3 +142,223 @@ Và khởi động lại Apache
 
 service apache2 restart
 
+Mô hình apache core
+
+Mô hình Apache core
+
+Apache core:
+
+http_protocol.c: chứa các procedure để giao tiếp với clinet thông qua giao thức http. Mọi thứ trao đổi với clinet do thằng này đảm nhiệm
+http_main.c :khởi động server, tạo vòng lặp chính để đợi + chấp nhận các kết nối, và quản lý toàn bộ timeout
+http_request.c: quản lý tiến trình xử lý bản tin request, đảm bảo chuyển các bản tin điều khiển tới các modul phù hợp theo đúng thứ tự + quản lý lỗi xảy ra trên server
+http_core.c: triển khai các chức năng cơ bản nhất trên Apache
+alloc.c: kiểm soát việc phân chia tài nguyên và lưu trữ các thông tin về sự phân chia đó
+http_config.c: xử lý file cấu hình và hỗ trợ virtual host + liệt kê các modul sử dụng trong apache
+2.    Request processing – luồng request, cách xử lý một request từ phía cinet
+
+Cách xử lý được thực hiện theo trình tự sau:
+
+1, Phân giải địa chỉ
+2, Kiểm tra truy cập và cấp quyền truy cập đến những tài nguyên cần thiết
+3, Xác định MIME (Multipurpose Internet Mail Extensions) của đối tượng truy vấn. Tức là thông tin về kiểu định dạng của tài nguyên trên server được gọi tên trong gói HTTP Request
+4, Chỉnh sửa lại một số thông tin ( ví dụ thay đổi Alisa thành một đường dẫn thực – định nghĩa trong modul alisa thuộc phần mod_alisa)
+5, Gửi lại dữ liệu cho clinet
+6, Ghi lại log
+3.    Communicating between modules – giao tiếp giữa các module
+
+Các modules không giao tiếp trực tiếp với nhau mà thông qua core.
+
+4.    Handler
+
+Handler là một hành động được Apache định nghĩa riêng cho từng loại file nhất định. Mặc định, tùy loại file mà sẽ được xử lý theo các cách khác nhau
+Handler có thể được cấu hình dựa trên phần mở rộng của file hoặc theo từng thư mục
+Mặc định, có 7 loại handler:
+Send-as-is: dùng trong module mod_asis, dùng để gửi trả gói tin cho clinet mà không sử dụng đầy đủ HTTP header
+Cgi-script: coi file là một cgi-script (tương ứng modul: mod_cgi)
+Imap-file sử dụng chung với mod_imagemap
+Server-info: lấy thông tin về cấu hình của server
+Server-status: lấy thông tin về trạng thái của server
+Type – map: sử dụng cùng với module mod_negotiation
+Default-handler: gửi file sử dụng default_handler()
+Ví dụ:
+Thay đổi nội dung mặc định với CGI script:
+Đoạn mã sau sẽ tác động lên các tập tin html, để kích hoạt lên tập tin footer.pl
+Action add-footer /cgi-bin/footer.pl
+AddHandler add-footer .html
+
+Sau đó, các tập tin CGI sẽ gửi các tài liệu theo yêu cầu (tại biến PATH_TRANSLATED) và thực hiện bất của yêu cầu nào mong muốn
+
+File với HTTP header
+Với send-as-is handler, được kích hoạt như sau:
+
+<Directory /web/htdocs/asis>
+SetHandler send-as-is
+</Directory>
+
+Khi đó tất cả các file trong /web/htdocs/asis sẽ được xử lý, bất kể đuôi là gì
+
+Chú ý lập trình:
+Để thực hiện các tính năng, chúng ta sẽ bổ sung vào bằng cách dùng Apache API , cụ thể, chúng ta sẽ thêm vào cấu trúc request_rec theo cấu trúc:
+
+Char*handler;
+
+Nếu muốn có một modul tham gia vào xử lý, thiết lập thêm r->handler, và phải thêm vào trước khi trình xử lý invoke_handler được yêu cầu.
+
+5.    Modules
+
+Các mdoul được cài đặt sẵn trong quá trinh buil Apache, hoặc có thể add thêm.
+
+Mặc định sẵn sẽ có các modules như sau – các modul này sẽ hoạt động lần lượt theo request của người dùng (6 bước, xem lại ở mục 2 – request processing)
+
+1, chuyển đổi giữa các URI thành filename trên server:
+Mod_userdir: chuyển thư mục home cho từng user
+Mod_rewrite: điều chỉnh lại đường dẫn URL
+2, Giai đoạn Xác thực/ Phân quyền:
+Mod_ahth, mod_auth_anon, mod_auth_db, mod_ahth_dbm: các kiểu xác thực người dùng
+Mod_access: kiểm soát truy cập theo từng host
+3, Xác định MIME của đối tượng được truy vấn:
+Mod_mime: xác định loại file bằng cách dựa vào phần mở rộng
+Mod_mime_magic: xác định loại file bằng cách sử dụng magic number
+4, chỉnh sửa đường dẫn:
+Mod_alias: thay thế alias bằng đường dẫn thực trên server
+Mod_env: thay đổi các tham số hệ thống dựa trên thông tin trong file cấu hình
+Mod_spelling: tự động sửa lỗi trông URL
+5, gửi trả lại cho clinet
+Mod_actions: các scrip cho từng loại file sẽ được thực thi
+Mod_asis: gửi file nguyên dạng
+Mod_autoindex:
+Mod_cgi: gọi scrip CGI và trả lại kết quả
+Mod_include:
+Mod_dir: xử lý về thư mục
+Mod_imap: xử lý về image-map file
+6, ghi log:
+Mod_log_*: các modul log khác nhau
+Gồm 3 thành phần chính:
+1, Global Evironment: các thông số để cấu hình điều khiển hoạt động của toàn bộ ApacheServer
+2, Các directive định nghĩa các thông số của “main” hay “default” server
+6.    Apache configuration File
+
+Khi một request đến Apache server mà không được virtual host nào xử lý thì các thông số này sẽ quyết định hành động của ApacheServer. Các tham số này cũng đồng thời xác lập các giá trị mậc định cho tất cả các Virtual host
+
+3, Các tham số riêng cho từng virtual host
+6.1 Config/ Global enviroment:
+
+1, ServerToken & ServerSignature
+ServerSignature Off
+
+ServerTokens Prod
+
+Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên server (chỉ là giảm thôi nhá)
+
+2, Server Root: cấu hình thư mục lưu trữ chính của Apache
+3, PidFile: thông số này lưu trữ đường dẫn đến file httpd.pid, là file lưu trữ process ID của Apache mỗi khi khởi chạy. Mặc định, file này nằm ở /etc/httpd/run/httpd.pid và trong đó chỉ có 1 con số (ví dụ: 1231)
+4, Timeout: thời gian tim out cho hệt hống, giá trị mặc định
+5, KeepAlive
+KeepAlive là một hình thức có thể giúp tăng tốc độ tải trang khi không mở kết nối cho từng request một. Tuy nhiên, khi bị tấn công Ddos, thì nên tắt chắc năng này để giảm thiểu ảnh hưởng tới hệ thống. Nhưng với CDN thì có lẽ nên bật vì số lượng Edge rõ lắm. Thông số KeepAlive cho phép kiểu kết nối này được bật hay không.
+
+Thông số KeepAliveTimeOut
+
+6, Listen: cấu hình địa chỉ IP và port để Apache nhận các gói request
+7, LoadModul: gọi modul nào sẽ khởi động cùng hệ thống
+8, Include: cấu hình thư mục chứa file config
+1, ServerAdmin: cấu hình địa chỉ email của người quản trị, sẽ hiển thị trên một số trang (như trang báo lỗi 404)
+2, UseCanonicalName: thông thường, khi sử dụng Name-based Virutal Host thì nên set là off – không hỉu
+3, DocumentRoot: thư mục lưu trữ các đường dẫn chứa mã nguồn của website, các requet từ clinet sẽ chỉ truy xuất thông tin từ thư mục này.
+Windows: c:/wampp/www
+Centos: /var/www/html/
+4, DirectoryIndex: chỉ định file mặc định được trả về cho clinet khi có request tới một thư mục nào đó, thông thường các file như index.html, index.php sẽ được sử dụng.
+6.2 Config/ Main Server Configuration
+
+DirectoryIndex index.htm index.html index.html.var
+5, AccessFileName: chỉ định file bổ sung các cấu hình riêng cho từng thư mục nhất định. Thông thường sẽ là file “.htaccess” – file này trong mỗi virutalhost sẽ có, nói lên việc truy cập, blah blah…
+6, TypesConfig: chỉ đường dẫn tới file mime.types. File này sẽ giúp cho Apache tra cứu phần mở rộng của file để xác định MIME type trong HTTP Header (xem lại phần ví dụ handler)
+DefaultType  text/plain
+
+Mặc định, MIME type cho các file apache không xác định được sẽ là kiểu file text
+
+7, HostnameLookups: cấu hình ghi log tên hostname của clinet hay chỉ đại chỉ IP của clinet (thường mặc định để off)
+8, ErrorLog: cấu hình đường lưu trữ Error của hệ thống
+9, LogLevel: mức độ ghi log. Giống như syslog, log trong Apache cũng được ghi thành 7 mức độ khác nhau từ cao xuống thấp là:
+Emergency
+Alert
+Critical
+Error
+Warning
+Notification
+Information
+Debug
+10, Log
+Dùng cái này để chạy nhiều site trên cùng một server.
+Có 2 loại cấu hình
+IP-based VirtualHost: trỏ từng website vào các địa chỉ IP (trên server có nhiều hơn 1IP)
+Name-based Virtual Host: thông tin hostname được lưu trong phần Header của bản tin HTTP Request. Khi nhận các bản tin Request này, thì apache sẽ chuyển đến các virtual host tương ứng (cần 1 IP thôi)
+Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-vhost.conf. Với các thành phần cụ thể như sau:
+Đường dẫn tới thư mục lưu trữ web
+Server name
+Đường dẫn tới log
+6.3 Apache Virtual Host
+
+Ví dụ:
+
+<VirtualHost *:80>
+DocumentRoot /www/example1
+
+ServerName www.example.com
+
+# Other directives here
+
+</VirtualHost>
+
+<VirtualHost *:80>
+
+DocumentRoot /www/example2
+
+ServerName www.example.org
+
+# Other directives here
+
+</VirtualHost>
+
+ 
+
+Xem thêm tại đây
+6.4 Một số trường – cấu hình apache server
+
+Các thông số trong http.conf
+Server Root: chỉ dẫn vị trí cài đặt Apache
+Cú pháp : ServerRoot <vị trí cài đặt Apache>
+
+Listen : quy định địa chỉ IP hoặc cổng mà Apache nhận kết nối từ client
+Cú pháp: listen <port/IP>
+
+Server Admin:địa chỉ mail của người quản trị hệ thống
+Cú pháp: ServerAdmin <địa chỉ email>
+
+Server name: tên máy tính của server
+Cú pháp: ServerName <tên máy server>ort
+
+DocumentRoot: lưu trữ nội dung của website, web server lấy lấy những tập tin trong thư mục (htdocs) phục vụ cho yêu cầu của client
+Cú pháp: DocumentRoot <đường dẫn thư mục>
+
+DirectoryIndex:các tập tin mặc định được truy vấn khi truy cập web
+Cú pháp: DirectoryIndex <danh sách các tập tin>
+
+Error Log :chỉ ra tập tin để server ghi vào những lỗi mà nó gặp phải
+Cú pháp:ErrorLog <vị trí log>
+
+Alias:ánh xạ đường dẫn cục bộ(không nằm trong document) thành đường dẫn địa chỉ URL
+Cú pháp:alias<đường dẫn http><đường dẫn cục bộ>
+
+7.    Mutiprocessing
+
+Có 2 khái niệm về khả năng xử lý của webserver
+
+Single-threaded web server: không có khả năng xử lý đồng thời nhiều request một lúc
+Multi-thread web server: có khả năng xử lý nhiều request một lúc, gồm 2 kĩ thuật chính là :
+Multi-process: tạo process cho từng request, có 2 loại chủ yếu
+Prefork: tạo các process riêng biệt. Lỗi trên 1 process không gây ảnh hưởng tới process khác
+Multi-thread: tạo Thread mới cho từng request
+Worker: tạo các thread riêng biệt cho request, hợp với đa lõi, nhưng nếu có 1 thread bị lỗi sẽ có thể gây ảnh hưởng tới các thread trong cùng process đó
+Đánh giá chung: Thread thì tiết kiệm tài nguyên hơn là Process. Nhưng còn tùy thuộc vào các yếu tố khác nhau, ví dụ PHP thì nên dùng Prefork, vì nó không ổn định với hình thức chia sẻ bộ nhớ chung (Process thì sẽ tạo tài nguyên riêng cho từng process, nên sẽ không bị ảnh hưởng khi dùng PHP). (Thread dùng chung bộ nhớ, tài nguyên à ảnh hưởng)
+
+( tra thêm tài liệu để hiểu rõ sự khác biệt giữa process và thread)
