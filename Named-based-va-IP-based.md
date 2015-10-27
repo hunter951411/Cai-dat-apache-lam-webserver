@@ -69,3 +69,27 @@ Site Website2.dev
 
 ##Cấu hình IP based virtual host:
 
+- Ta thêm 1 card mạng ảo bằng lệnh:
+**sudo ifconfig eth0:1 192.168.221.140 up**
+
+- Thêm thư mục cho Site Ipbased:
+
+**sudo mkdir /var/www/html/hunter**
+
+- Tạo file index.html:
+<img src="http://i.imgur.com/i7iUpnR.png">
+
+- Ta sửa lại file config trong tập tin /etc/apache2/sites-available/000-default.conf
+- Thêm vào các thông tin cho site Ipbased:
+
+<img src="http://i.imgur.com/Yyvad2S.png">
+
+- Sau đó ta thử đánh địa chỉ của 2 trang web vào để kiểm tra:
+
+Site chính, Ip add 192.168.221.139
+
+<img src="http://i.imgur.com/ccUwQ9V.png">
+
+Site Ipbased, Ip add 192.168.221.140
+
+<img src="http://i.imgur.com/wPNjlii.png">
