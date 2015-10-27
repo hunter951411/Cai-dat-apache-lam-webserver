@@ -7,32 +7,52 @@
 
 ##Cấu hình named based virtual host:
 
+- Trước tiên tạo 2 folder chứa 2 Virtual Host muốn đặt bằng lệnh:
 
+  **sudo mkdir /var/www/html/website1**
 
-<ServerRoot>/public_html/namebased/web1/index.html
-               <html><body><h1>Name based: Website 1</h1></body></html> 
-<ServerRoot>/public_html/namebased/web2/index.html
-               <html><body><h1>Name based: Website 2</h1></body></html> 
-<ServerRoot> là thư mục trỏ đến thư mục cài đặt của apache, trực tiếp chứa các thư mục con như conf, bin...
+  **sudo mkdir /var/www/html/website2**
   
-Apache server nằm trên một máy tính có IP được gán trên một interface là 192.168.221.138
+- Sau đó ta copy file config trong tập tin /etc/apache2/sites-available/000-default.conf để dùng sẵn file config mà apache có sẵn bằng lệnh:
 
-Cấu hình để apache server host hai website kể trên:
-vi <ServerRoot>/conf/httpd.conf
+  **sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/website1.dev.conf**
 
-Listen 8080
+  **sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/website2.dev.conf**
 
-<VirtualHost 192.168.221.138:8080>
-   ServerName web1.namebased.example.com
-   ServerAlias web1 web1.example.com  
-   ServerAlias *.web1.namebased.example.com
-   DocumentRoot <ServerRoot>/public_html/namebased/web1/
-</VirtualHost>
+- Sau đó ta vào từng file cấu hình vừa đc copy ra và sửa, bằng lệnh:
 
-<VirtualHost 192.168.56.138:8080>
-   ServerName web2.namebased.example.com
-   DocumentRoot <ServerRoot>/public_html/namebased/web2/
-</VirtualHost>
+**sudo nano /etc/apache2/sites-available/website1.dev.conf**
+
+- Ở đây mình sửa file website1.dev.conf, với website2 làm tương tự:
+
+<img src="http://i.imgur.com/0G8c6gE.png">
+
+- Thêm vào ServerName và ServerAlias xong đó Save lại.
+
+- Tạo ra file index.html trong 2 site:
+
+Site Website1.dev
+<img src="http://i.imgur.com/itaDctj.png">
+
+Site Website2.dev
+<img src="http://i.imgur.com/8n2IbC8.png">
+
+- Tiếp theo dùng lệnh để tạo liên kết, ta dùng lệnh:
+
+**sudo a2ensites website1.dev**
+
+**sudo a2ensites website2.dev**
+
+- Ở đây chưa có DNS nên ta thêm vào file hosts trên máy chủ để test thử
+<img src="http://i.imgur.com/ZfhGce5.png">
+
+- Sau đó reload lại Apache2 và kiểm tra các trang web:
+
+###Site webstie1.dev
+<img src="http://i.imgur.com/kklQn75.png">
+
+###Site webstie2.dev
+<img src="http://i.imgur.com/ROBWLFz.png">
 
 - Nguyên tắc chung của apache (cả name based và ip based virtualhost) sẽ là:
 <ul>
