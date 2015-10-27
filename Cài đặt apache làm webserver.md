@@ -41,14 +41,17 @@
 - Trước khi làm việc ở Ubuntu, nên tiến hành cập nhập gói phần mềm của Ubuntu lên phiên bản mới nhất với lệnh:
 
 **apt-get update**
+
 <img src="http://i.imgur.com/IzwUeji.png" >
 
 - Tên phần mềm Apache trên Ubuntu là apache2 nên sẽ cài đặt với lệnh sau:
 
 **apt-get install apache2**
+
 <img src="http://i.imgur.com/zn5jWnL.png" >
 
 - Cài đặt trong thì truy cập vào địa chỉ Ip của máy chủ, sẽ thấy trang chào mừng của Apache
+- 
 <img src="http://i.imgur.com/n0Pwvu5.png">
 
 ###Cấu trúc thư mục cấu hình Apache trên Ubuntu
