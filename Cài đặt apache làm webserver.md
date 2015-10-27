@@ -41,15 +41,15 @@
 - Trước khi làm việc ở Ubuntu, nên tiến hành cập nhập gói phần mềm của Ubuntu lên phiên bản mới nhất với lệnh:
 
 **apt-get update**
-<img src="http://prntscr.com/8vi9rg" >
+<img src="http://i.imgur.com/IzwUeji.png" >
 
 - Tên phần mềm Apache trên Ubuntu là apache2 nên sẽ cài đặt với lệnh sau:
 
 **apt-get install apache2**
-<img src="http://prntscr.com/8via5r" >
+<img src="http://i.imgur.com/zn5jWnL.png" >
 
 - Cài đặt trong thì truy cập vào địa chỉ Ip của máy chủ, sẽ thấy trang chào mừng của Apache
-<img src=http://prntscr.com/8vib2b>
+<img src="http://i.imgur.com/n0Pwvu5.png">
 
 ###Cấu trúc thư mục cấu hình Apache trên Ubuntu
 
@@ -82,7 +82,7 @@
 
 Bây giờ hãy mở file /etc/apache2/sites-available/hunter.dev.conf lên và sửa nội dung trong đó:
 
-<img src="http://prntscr.com/8vrh70">	
+<img src="http://i.imgur.com/m0IszpT.png">	
 
 * SererName – Domain website cần thêm vào.
 * ServerAlias – Sử dụng một tên domain khác thay thế, hay còn gọi là Parked Domain nếu bạn đã từng sử dụng qua cPanel đó.
@@ -96,7 +96,7 @@ Sau đó chúng ta gõ lệnh sau để nó tự động tạo ra một symlink 
 
 Tạo file index.html trong tập tin /var/www/html/hunter/
 
-<img src="http://prntscr.com/8vriit">
+<img src="http://i.imgur.com/fqmcSbw.png">
 
 Khởi động lại Apache.
 
@@ -104,11 +104,11 @@ Khởi động lại Apache.
 
 Vì chưa có DNS dựng sẵn nên ta sẽ sửa luôn trong file host của chính máy chủ ở tập tin /etc/hosts
 
-<img src="http://prntscr.com/8vrjq0">
+<img src="http://i.prntscr.com/18d43fd14ab04c51823119f3d73901e6.png">
 
 Sau khi hoàn tất gõ vào trình duyệt hunter.dev. Hiện ra như hình dưới là đã cài Virtual Host thành công
 
-<img src="http://prntscr.com/8vrlvm">
+<img src="http://i.imgur.com/uriwnfN.png">
 
 
 
