@@ -92,7 +92,7 @@ Bây giờ hãy mở file /etc/apache2/sites-available/hunter.dev.conf lên và 
 
 Sau đó chúng ta gõ lệnh sau để nó tự động tạo ra một symlink của file này vào thư mục sites-enabled để bật nó lên.
 
-	**a2ensite hunter.dev.conf**
+	**a2ensite hunter.dev**
 
 Tạo file index.html trong tập tin /var/www/html/hunter/
 
@@ -113,42 +113,50 @@ Sau khi hoàn tất gõ vào trình duyệt hunter.dev. Hiện ra như hình dư
 
 
 
-Mô hình Apache core
+#III. Mô hình Apache core
 
-Apache core:
+##1.. Apache core:
 
-http_protocol.c: chứa các procedure để giao tiếp với clinet thông qua giao thức http. Mọi thứ trao đổi với clinet do thằng này đảm nhiệm
-http_main.c :khởi động server, tạo vòng lặp chính để đợi + chấp nhận các kết nối, và quản lý toàn bộ timeout
-http_request.c: quản lý tiến trình xử lý bản tin request, đảm bảo chuyển các bản tin điều khiển tới các modul phù hợp theo đúng thứ tự + quản lý lỗi xảy ra trên server
-http_core.c: triển khai các chức năng cơ bản nhất trên Apache
-alloc.c: kiểm soát việc phân chia tài nguyên và lưu trữ các thông tin về sự phân chia đó
-http_config.c: xử lý file cấu hình và hỗ trợ virtual host + liệt kê các modul sử dụng trong apache
-2.    Request processing – luồng request, cách xử lý một request từ phía cinet
+- **http_protocol.c:** chứa các procedure để giao tiếp với clinet thông qua giao thức http. Mọi thứ trao đổi với clinet do thằng này đảm nhiệm.
+- **http_main.c:** khởi động server, tạo vòng lặp chính để đợi + chấp nhận các kết nối, và quản lý toàn bộ timeout.
+- **http_request.c:** quản lý tiến trình xử lý bản tin request, đảm bảo chuyển các bản tin điều khiển tới các modul phù hợp theo đúng thứ tự + quản lý lỗi xảy ra trên server.
+- **http_core.c:** triển khai các chức năng cơ bản nhất trên Apache.
+- **alloc.c:** kiểm soát việc phân chia tài nguyên và lưu trữ các thông tin về sự phân chia đó.
+- **http_config.c:** xử lý file cấu hình và hỗ trợ virtual host + liệt kê các modul sử dụng trong apache.
 
-Cách xử lý được thực hiện theo trình tự sau:
+##2. Request processing – luồng request, cách xử lý một request từ phía client.
 
-1, Phân giải địa chỉ
-2, Kiểm tra truy cập và cấp quyền truy cập đến những tài nguyên cần thiết
-3, Xác định MIME (Multipurpose Internet Mail Extensions) của đối tượng truy vấn. Tức là thông tin về kiểu định dạng của tài nguyên trên server được gọi tên trong gói HTTP Request
-4, Chỉnh sửa lại một số thông tin ( ví dụ thay đổi Alisa thành một đường dẫn thực – định nghĩa trong modul alisa thuộc phần mod_alisa)
-5, Gửi lại dữ liệu cho clinet
-6, Ghi lại log
-3.    Communicating between modules – giao tiếp giữa các module
+- Cách xử lý được thực hiện theo trình tự sau:
+<ul>
+<li>1, Phân giải địa chỉ.</li>
+<li>2, Kiểm tra truy cập và cấp quyền truy cập đến những tài nguyên cần thiết.</li>
+<li>3, Xác định MIME (Multipurpose Internet Mail Extensions) của đối tượng truy vấn. Tức là thông tin về kiểu định dạng của tài nguyên trên server được gọi tên trong gói HTTP Request.</li>
+<li>4, Chỉnh sửa lại một số thông tin ( ví dụ thay đổi Alisa thành một đường dẫn thực – định nghĩa trong modul alisa thuộc phần mod_alisa).</li>
+<li>5, Gửi lại dữ liệu cho clinet.</li>
+<li>6, Ghi lại log.</li>
+</ul>
 
-Các modules không giao tiếp trực tiếp với nhau mà thông qua core.
+##3. Communicating between modules – giao tiếp giữa các module
 
-4.    Handler
+- Các modules không giao tiếp trực tiếp với nhau mà thông qua core.
 
-Handler là một hành động được Apache định nghĩa riêng cho từng loại file nhất định. Mặc định, tùy loại file mà sẽ được xử lý theo các cách khác nhau
-Handler có thể được cấu hình dựa trên phần mở rộng của file hoặc theo từng thư mục
-Mặc định, có 7 loại handler:
-Send-as-is: dùng trong module mod_asis, dùng để gửi trả gói tin cho clinet mà không sử dụng đầy đủ HTTP header
-Cgi-script: coi file là một cgi-script (tương ứng modul: mod_cgi)
-Imap-file sử dụng chung với mod_imagemap
-Server-info: lấy thông tin về cấu hình của server
-Server-status: lấy thông tin về trạng thái của server
-Type – map: sử dụng cùng với module mod_negotiation
-Default-handler: gửi file sử dụng default_handler()
+##4. Handler
+
+- Handler là một hành động được Apache định nghĩa riêng cho từng loại file nhất định. Mặc định, tùy loại file mà sẽ được xử lý theo các cách khác nhau.
+
+- Handler có thể được cấu hình dựa trên phần mở rộng của file hoặc theo từng thư mục
+
+- Mặc định, có 7 loại handler:
+<ul>
+<li>Send-as-is: dùng trong module mod_asis, dùng để gửi trả gói tin cho clinet mà không sử dụng đầy đủ HTTP header.</li>
+<li>Cgi-script: coi file là một cgi-script (tương ứng modul: mod_cgi).</li>
+<li>Imap-file sử dụng chung với mod_imagemap.</li>
+<li>Server-info: lấy thông tin về cấu hình của server.</li>
+<li>Server-status: lấy thông tin về trạng thái của server.</li>
+<li>Type – map: sử dụng cùng với module mod_negotiation.</li>
+<li>Default-handler: gửi file sử dụng default_handler().</li>
+</ul>
+
 Ví dụ:
 Thay đổi nội dung mặc định với CGI script:
 Đoạn mã sau sẽ tác động lên các tập tin html, để kích hoạt lên tập tin footer.pl
