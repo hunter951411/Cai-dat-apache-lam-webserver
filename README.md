@@ -73,47 +73,16 @@
 
 - Cách thêm VirtualHost của Apache trên Ubuntu sẽ khác so với CentOS. Trước tiên, chúng ta cũng cần tạo cho nó một thư mục chứa dữ liệu cho domain cần thêm vào
 
-	**mkdir -p /home/hunter.com/public_html**
-	**mkdir -p /home/hunter.com/log**
+	**#mkdir /var/www/html/hunter**
 
 - Sau đó chúng ta cần copy file /etc/apache2/sites-available/000-default.conf ra một file mới file chứa cấu hình của domain cần thêm vào (hunter.com)
-Lưu ý: Có thể file cấu hình mặc định của bạn không phải tên là default mà là “000-default.conf” nên tốt nhất bạn nên vào thư mục /etc/apache2/sites-available/ để xem rồi copy cho đúng.
-Bây giờ hãy mở file /etc/apache2/sites-available/thachpham.dev.conf lên và sửa nội dung trong đó cho nó gọn hơn như thế này:
 
-	'<VirtualHost *:80>
-	        ServerName thachpham.dev
-	        ServerAlias www.thachpham.dev
-	        ServerAdmin contact@thachpham.com
-	 
-	        DocumentRoot /home/thachpham.dev/public_html
-	 
-	        <Directory /home/thachpham.dev/public_html>
-	                Options FollowSymLinks
-	                AllowOverride All
-	                Order allow,deny
-	                Allow from all
-	                Require all granted
-	        </Directory>
-	 
-	        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-	        # error, crit, alert, emerg.
-	        # It is also possible to configure the loglevel for particular
-	        # modules, e.g.
-	        LogLevel error
-	 
-	        ErrorLog /home/thachpham.dev/log/error.log
-	        CustomLog /home/thachpham.dev/log/access.log combined
-	 
-	        # For most configuration files from conf-available/, which are
-	        # enabled or disabled at a global level, it is possible to
-	        # include a line for only one particular virtual host. For example the
-	        # following line enables the CGI configuration for this host only
-	        # after it has been globally disabled with "a2disconf".
-	        #Include conf-available/serve-cgi-bin.conf
-	</VirtualHost>
-	 
-	# vim: syntax=apache ts=4 sw=4 sts=4 sr noet'
-Nhớ thay:
+	**#cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/hunter.dev.conf**
+	
+
+Bây giờ hãy mở file /etc/apache2/sites-available/hunter.dev.conf lên và sửa nội dung trong đó:
+
+<img src="http://prntscr.com/8vrh70">	
 
 	* SererName – Domain website cần thêm vào.
 	* ServerAlias – Sử dụng một tên domain khác thay thế, hay còn gọi là Parked Domain nếu bạn đã từng sử dụng qua cPanel đó.
@@ -123,40 +92,26 @@ Nhớ thay:
 
 Sau đó chúng ta gõ lệnh sau để nó tự động tạo ra một symlink của file này vào thư mục sites-enabled để bật nó lên.
 
-	**a2ensite thachpham.dev**
+	**a2ensite hunter.dev.conf**
 
-Hãy nhớ rằng, thachpham.dev.conf là tên file cấu hình trong thư mục sites-available đã bỏ đuôi .conf.
-Kết quả trả về:
+Tạo file index.html trong tập tin /var/www/html/hunter/
 
-root@vps103534:~# a2ensite thachpham.dev
-Enabling site thachpham.dev.
-To activate the new configuration, you need to run:
-service apache2 reload
-Gõ lệnh sau để khởi động lại Apache.
+<img src="http://prntscr.com/8vriit">
 
-service apache2 restart
-Bây giờ nếu bạn truy cập domain vừa thêm vào nó sẽ hiển thị ra lỗi 403 do thư mục của domain chứa có tập tin index để nó load. Hãy tạo ra một file index.html với nội dung sau và upload vào thư mục public_html của domain vừa thêm.
+Khởi động lại Apache.
 
-<html>
-<head></head>
-<body><h1>Tao VirtualHost Thanh Cong! </h1></body>
-</html>
-Kết quả:
+	**#service apache2 restart**
 
-Nếu bị lỗi 500
-Nếu bạn vào website mà bị lỗi 500 (dễ gặp ở Ubuntu 10.04 32-bits), hãy mở lại file cấu hình virtualhost của bạn và xóa đoạn này đi:
+Vì chưa có DNS dựng sẵn nên ta sẽ sửa luôn trong file host của chính máy chủ ở tập tin /etc/hosts
 
-Order allow,deny
-Allow from all
-Require all granted
-I.4) Bật module mod_rewriteNếu bạn sử dụng WordPress sau này hay các website khác có sử dụng mod_rewrite để ghi lại đường dẫn thì phải bật module này lên. Ở phần thêm VirtualHost, chúng ta đã thêm AllowOverride All vào thiết lập thư mục gốc của domain rồi, nhưng chúng ta cũng cần bật module rewrite lên nữa. Hãy gõ lệnh sau:
+<img src="http://prntscr.com/8vrjq0">
 
-a2enmod rewrite
-Và khởi động lại Apache
+Sau khi hoàn tất gõ vào trình duyệt hunter.dev. Hiện ra như hình dưới là đã cài Virtual Host thành công
 
-service apache2 restart
+<img src="http://prntscr.com/8vrlvm">
 
-Mô hình apache core
+
+
 
 Mô hình Apache core
 
@@ -310,32 +265,7 @@ Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-
 Đường dẫn tới thư mục lưu trữ web
 Server name
 Đường dẫn tới log
-6.3 Apache Virtual Host
 
-Ví dụ:
-
-<VirtualHost *:80>
-DocumentRoot /www/example1
-
-ServerName www.example.com
-
-# Other directives here
-
-</VirtualHost>
-
-<VirtualHost *:80>
-
-DocumentRoot /www/example2
-
-ServerName www.example.org
-
-# Other directives here
-
-</VirtualHost>
-
- 
-
-Xem thêm tại đây
 6.4 Một số trường – cấu hình apache server
 
 Các thông số trong http.conf
@@ -375,4 +305,3 @@ Multi-thread: tạo Thread mới cho từng request
 Worker: tạo các thread riêng biệt cho request, hợp với đa lõi, nhưng nếu có 1 thread bị lỗi sẽ có thể gây ảnh hưởng tới các thread trong cùng process đó
 Đánh giá chung: Thread thì tiết kiệm tài nguyên hơn là Process. Nhưng còn tùy thuộc vào các yếu tố khác nhau, ví dụ PHP thì nên dùng Prefork, vì nó không ổn định với hình thức chia sẻ bộ nhớ chung (Process thì sẽ tạo tài nguyên riêng cho từng process, nên sẽ không bị ảnh hưởng khi dùng PHP). (Thread dùng chung bộ nhớ, tài nguyên à ảnh hưởng)
 
-( tra thêm tài liệu để hiểu rõ sự khác biệt giữa process và thread)
