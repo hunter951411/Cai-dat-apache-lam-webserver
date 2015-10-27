@@ -84,11 +84,11 @@ Bây giờ hãy mở file /etc/apache2/sites-available/hunter.dev.conf lên và 
 
 <img src="http://prntscr.com/8vrh70">	
 
-	* SererName – Domain website cần thêm vào.
-	* ServerAlias – Sử dụng một tên domain khác thay thế, hay còn gọi là Parked Domain nếu bạn đã từng sử dụng qua cPanel đó.
-	* DocumentRoot – Đường dẫn tới thư mục chứa dữ liệu website của domain này mà ta đã tạo ở trên.
-	* ErrorLog – Đường dẫn tới thư mục log đã tạo ở trên cho domain này.
-	* CustomLog – Tương tự ErrorLog nhưng sẽ lưu log lại các lượt truy cập với file là access.log.
+* SererName – Domain website cần thêm vào.
+* ServerAlias – Sử dụng một tên domain khác thay thế, hay còn gọi là Parked Domain nếu bạn đã từng sử dụng qua cPanel đó.
+* DocumentRoot – Đường dẫn tới thư mục chứa dữ liệu website của domain này mà ta đã tạo ở trên.
+* ErrorLog – Đường dẫn tới thư mục log đã tạo ở trên cho domain này.
+* CustomLog – Tương tự ErrorLog nhưng sẽ lưu log lại các lượt truy cập với file là access.log.
 
 Sau đó chúng ta gõ lệnh sau để nó tự động tạo ra một symlink của file này vào thư mục sites-enabled để bật nó lên.
 
@@ -317,11 +317,14 @@ Debug
 
 ####10, Log
 
-Dùng cái này để chạy nhiều site trên cùng một server.
-Có 2 loại cấu hình
+- Dùng cái này để chạy nhiều site trên cùng một server.
+
+- Có 2 loại cấu hình
+
 IP-based VirtualHost: trỏ từng website vào các địa chỉ IP (trên server có nhiều hơn 1IP)
 Name-based Virtual Host: thông tin hostname được lưu trong phần Header của bản tin HTTP Request. Khi nhận các bản tin Request này, thì apache sẽ chuyển đến các virtual host tương ứng (cần 1 IP thôi)
-Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-vhost.conf. Với các thành phần cụ thể như sau:
+
+- Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-vhost.conf. Với các thành phần cụ thể như sau:
 Đường dẫn tới thư mục lưu trữ web
 Server name
 Đường dẫn tới log
@@ -357,12 +360,10 @@ Cú pháp:alias<đường dẫn http><đường dẫn cục bộ>
 
 Có 2 khái niệm về khả năng xử lý của webserver
 
-Single-threaded web server: không có khả năng xử lý đồng thời nhiều request một lúc
-Multi-thread web server: có khả năng xử lý nhiều request một lúc, gồm 2 kĩ thuật chính là :
-Multi-process: tạo process cho từng request, có 2 loại chủ yếu
-Prefork: tạo các process riêng biệt. Lỗi trên 1 process không gây ảnh hưởng tới process khác
-Multi-thread: tạo Thread mới cho từng request
-Worker: tạo các thread riêng biệt cho request, hợp với đa lõi, nhưng nếu có 1 thread bị lỗi sẽ có thể gây ảnh hưởng tới các thread trong cùng process đó
-Đánh giá chung: Thread thì tiết kiệm tài nguyên hơn là Process. Nhưng còn tùy thuộc vào các yếu tố khác nhau, ví dụ PHP thì nên dùng Prefork, vì nó không ổn định với hình thức chia sẻ bộ nhớ chung (Process thì sẽ tạo tài nguyên riêng cho từng process, nên sẽ không bị ảnh hưởng khi dùng PHP). (Thread dùng chung bộ nhớ, tài nguyên à ảnh hưởng)
-
-( tra thêm tài liệu để hiểu rõ sự khác biệt giữa process và thread)
+- Single-threaded web server: không có khả năng xử lý đồng thời nhiều request một lúc
+- Multi-thread web server: có khả năng xử lý nhiều request một lúc, gồm 2 kĩ thuật chính là :
+- Multi-process: tạo process cho từng request, có 2 loại chủ yếu
+- Prefork: tạo các process riêng biệt. Lỗi trên 1 process không gây ảnh hưởng tới process khác
+- Multi-thread: tạo Thread mới cho từng request
+- Worker: tạo các thread riêng biệt cho request, hợp với đa lõi, nhưng nếu có 1 thread bị lỗi sẽ có thể gây ảnh hưởng tới các thread trong cùng process đó
+- Đánh giá chung: Thread thì tiết kiệm tài nguyên hơn là Process. Nhưng còn tùy thuộc vào các yếu tố khác nhau, ví dụ PHP thì nên dùng Prefork, vì nó không ổn định với hình thức chia sẻ bộ nhớ chung (Process thì sẽ tạo tài nguyên riêng cho từng process, nên sẽ không bị ảnh hưởng khi dùng PHP). (Thread dùng chung bộ nhớ, tài nguyên à ảnh hưởng)
