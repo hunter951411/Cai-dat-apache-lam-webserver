@@ -168,82 +168,144 @@ Nếu muốn có một modul tham gia vào xử lý, thiết lập thêm r->hand
 
 ###5.1 chuyển đổi giữa các URI thành filename trên server:
 
-Mod_userdir: chuyển thư mục home cho từng user
-Mod_rewrite: điều chỉnh lại đường dẫn URL
+- **Mod_userdir**: chuyển thư mục home cho từng user
+
+- **Mod_rewrite**: điều chỉnh lại đường dẫn URL
 
 ###5.2 Giai đoạn Xác thực/ Phân quyền:
 
-Mod_ahth, mod_auth_anon, mod_auth_db, mod_ahth_dbm: các kiểu xác thực người dùng
-Mod_access: kiểm soát truy cập theo từng host
+- **Mod_ahth, mod_auth_anon, mod_auth_db, mod_ahth_dbm**: các kiểu xác thực người dùng
+
+- **Mod_access**: kiểm soát truy cập theo từng host
 
 ###5.3, Xác định MIME của đối tượng được truy vấn:
 
-Mod_mime: xác định loại file bằng cách dựa vào phần mở rộng
-Mod_mime_magic: xác định loại file bằng cách sử dụng magic number
+- **Mod_mime**: xác định loại file bằng cách dựa vào phần mở rộng
+
+- **Mod_mime_magic**: xác định loại file bằng cách sử dụng magic number
 
 ###5.4, chỉnh sửa đường dẫn:
 
-Mod_alias: thay thế alias bằng đường dẫn thực trên server
-Mod_env: thay đổi các tham số hệ thống dựa trên thông tin trong file cấu hình
-Mod_spelling: tự động sửa lỗi trông URL
+- **Mod_alias**: thay thế alias bằng đường dẫn thực trên server
+
+- **Mod_env**: thay đổi các tham số hệ thống dựa trên thông tin trong file cấu hình
+
+- **Mod_spelling**: tự động sửa lỗi trông URL
 
 ###5.5, gửi trả lại cho clinet
 
-Mod_actions: các scrip cho từng loại file sẽ được thực thi
-Mod_asis: gửi file nguyên dạng
-Mod_autoindex:
-Mod_cgi: gọi scrip CGI và trả lại kết quả
-Mod_include:
-Mod_dir: xử lý về thư mục
-Mod_imap: xử lý về image-map file
+- **Mod_actions**: các scrip cho từng loại file sẽ được thực thi
 
-###5.6, ghi log:
+- **Mod_asis**: gửi file nguyên dạng
 
-Mod_log_*: các modul log khác nhau
-Gồm 3 thành phần chính:
-1, Global Evironment: các thông số để cấu hình điều khiển hoạt động của toàn bộ ApacheServer
-2, Các directive định nghĩa các thông số của “main” hay “default” server
-3, Các tham số riêng cho từng virtual host
+- **Mod_autoindex**:
 
-##6.    Apache configuration File
+- **Mod_cgi**: gọi scrip CGI và trả lại kết quả
+
+- **Mod_include**:
+
+- **Mod_dir**: xử lý về thư mục
+
+- **Mod_imap**: xử lý về image-map file
+
+###5.6, Ghi log:
+
+- **Mod_log_**: các modul log khác nhau
+
+####Gồm 3 thành phần chính:
+<ul>
+<li>1, Global Evironment: các thông số để cấu hình điều khiển hoạt động của toàn bộ ApacheServer</li>
+<li>2, Các directive định nghĩa các thông số của “main” hay “default” server</li>
+<li>3, Các tham số riêng cho từng virtual host</li>
+</ul>
+
+##6. Apache configuration File
 
 ###6.1 Config/ Global enviroment:
 
-1, ServerToken & ServerSignature
+####1, ServerToken & ServerSignature
 
-ServerSignature Off
+	ServerSignature Off
+	ServerTokens Prod
 
-ServerTokens Prod
+- Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên server.
 
-Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên server.
+####2, Server Root
 
-2, Server Root: cấu hình thư mục lưu trữ chính của Apache
-3, PidFile: thông số này lưu trữ đường dẫn đến file httpd.pid, là file lưu trữ process ID của Apache mỗi khi khởi chạy. Mặc định, file này nằm ở /etc/httpd/run/httpd.pid và trong đó chỉ có 1 con số (ví dụ: 1231)
-4, Timeout: thời gian tim out cho hệt hống, giá trị mặc định
-5, KeepAlive
-KeepAlive là một hình thức có thể giúp tăng tốc độ tải trang khi không mở kết nối cho từng request một. Tuy nhiên, khi bị tấn công Ddos, thì nên tắt chắc năng này để giảm thiểu ảnh hưởng tới hệ thống. Nhưng với CDN thì có lẽ nên bật vì số lượng Edge rõ lắm. Thông số KeepAlive cho phép kiểu kết nối này được bật hay không.
+- Cấu hình thư mục lưu trữ chính của Apache
+
+####3, PidFile
+
+- Thông số này lưu trữ đường dẫn đến file httpd.pid, là file lưu trữ process ID của Apache mỗi khi khởi chạy. Mặc định, file này nằm ở /etc/httpd/run/httpd.pid và trong đó chỉ có 1 con số (ví dụ: 1231)
+
+####4, Timeout
+
+- Thời gian tim out cho hệt hống, giá trị mặc định
+
+####5, KeepAlive
+
+- KeepAlive là một hình thức có thể giúp tăng tốc độ tải trang khi không mở kết nối cho từng request một. Tuy nhiên, khi bị tấn công Ddos, thì nên tắt chắc năng này để giảm thiểu ảnh hưởng tới hệ thống. Nhưng với CDN thì có lẽ nên bật vì số lượng Edge rõ lắm. Thông số KeepAlive cho phép kiểu kết nối này được bật hay không.
 
 
-6, Listen: cấu hình địa chỉ IP và port để Apache nhận các gói request
-7, LoadModul: gọi modul nào sẽ khởi động cùng hệ thống
-8, Include: cấu hình thư mục chứa file config
+####6, Listen
+
+- Cấu hình địa chỉ IP và port để Apache nhận các gói request
+
+####7, LoadModul
+
+- Gọi modul nào sẽ khởi động cùng hệ thống
+
+####8, Include
+
+- Cấu hình thư mục chứa file config
 	
-	1, ServerAdmin: cấu hình địa chỉ email của người quản trị, sẽ hiển thị trên một số trang (như trang báo lỗi 404)
-2, UseCanonicalName: thông thường, khi sử dụng Name-based Virutal Host thì nên set là off – không hỉu
-3, DocumentRoot: thư mục lưu trữ các đường dẫn chứa mã nguồn của website, các requet từ clinet sẽ chỉ truy xuất thông tin từ thư mục này.
+###6.2 Config/ Main Server Configuration	
+
+####1, ServerAdmin
+
+- Cấu hình địa chỉ email của người quản trị, sẽ hiển thị trên một số trang (như trang báo lỗi 404)
+
+####2, UseCanonicalName
+
+- Thông thường, khi sử dụng Name-based Virutal Host thì nên set là off – không hỉu
+
+####3, DocumentRoot
+
+- Thư mục lưu trữ các đường dẫn chứa mã nguồn của website, các requet từ clinet sẽ chỉ truy xuất thông tin từ thư mục này.
+
 Windows: c:/wampp/www
 Centos: /var/www/html/
-4, DirectoryIndex: chỉ định file mặc định được trả về cho clinet khi có request tới một thư mục nào đó, thông thường các file như index.html, index.php sẽ được sử dụng.
+
+####4, DirectoryIndex
+
+- Chỉ định file mặc định được trả về cho clinet khi có request tới một thư mục nào đó, thông thường các file như index.html, index.php sẽ được sử dụng.
+
 DirectoryIndex index.htm index.html index.html.var
-5, AccessFileName: chỉ định file bổ sung các cấu hình riêng cho từng thư mục nhất định. Thông thường sẽ là file “.htaccess” – file này trong mỗi virutalhost sẽ có, nói lên việc truy cập, blah blah…
-6, TypesConfig: chỉ đường dẫn tới file mime.types. File này sẽ giúp cho Apache tra cứu phần mở rộng của file để xác định MIME type trong HTTP Header (xem lại phần ví dụ handler)
+
+####5, AccessFileName
+
+- Chỉ định file bổ sung các cấu hình riêng cho từng thư mục nhất định. Thông thường sẽ là file “.htaccess” – file này trong mỗi virutalhost sẽ có, nói lên việc truy cập, blah blah…
+
+####6, TypesConfig
+
+- Chỉ đường dẫn tới file mime.types. File này sẽ giúp cho Apache tra cứu phần mở rộng của file để xác định MIME type trong 
+
+HTTP Header 
 DefaultType  text/plain
 
-Mặc định, MIME type cho các file apache không xác định được sẽ là kiểu file text
+- Mặc định, MIME type cho các file apache không xác định được sẽ là kiểu file text
 
-7, HostnameLookups: cấu hình ghi log tên hostname của clinet hay chỉ đại chỉ IP của clinet (thường mặc định để off)
-8, ErrorLog: cấu hình đường lưu trữ Error của hệ thống
-9, LogLevel: mức độ ghi log. Giống như syslog, log trong Apache cũng được ghi thành 7 mức độ khác nhau từ cao xuống thấp là:
+####7, HostnameLookups
+
+- Cấu hình ghi log tên hostname của clinet hay chỉ đại chỉ IP của clinet (thường mặc định để off)
+
+####8, ErrorLog
+
+- Cấu hình đường lưu trữ Error của hệ thống
+
+####9, LogLevel
+
+- Mức độ ghi log. Giống như syslog, log trong Apache cũng được ghi thành 7 mức độ khác nhau từ cao xuống thấp là:
 Emergency
 Alert
 Critical
@@ -252,7 +314,9 @@ Warning
 Notification
 Information
 Debug
-10, Log
+
+####10, Log
+
 Dùng cái này để chạy nhiều site trên cùng một server.
 Có 2 loại cấu hình
 IP-based VirtualHost: trỏ từng website vào các địa chỉ IP (trên server có nhiều hơn 1IP)
@@ -262,7 +326,7 @@ Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-
 Server name
 Đường dẫn tới log
 
-###6.2 Một số trường – cấu hình apache server
+###6.3 Một số trường – cấu hình apache server
 
 Các thông số trong http.conf
 Server Root: chỉ dẫn vị trí cài đặt Apache
