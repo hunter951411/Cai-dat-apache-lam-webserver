@@ -157,50 +157,38 @@ Sau khi hoàn tất gõ vào trình duyệt hunter.dev. Hiện ra như hình dư
 <li>Default-handler: gửi file sử dụng default_handler().</li>
 </ul>
 
-Ví dụ:
-Thay đổi nội dung mặc định với CGI script:
-Đoạn mã sau sẽ tác động lên các tập tin html, để kích hoạt lên tập tin footer.pl
-Action add-footer /cgi-bin/footer.pl
-AddHandler add-footer .html
-
-Sau đó, các tập tin CGI sẽ gửi các tài liệu theo yêu cầu (tại biến PATH_TRANSLATED) và thực hiện bất của yêu cầu nào mong muốn
-
-File với HTTP header
-Với send-as-is handler, được kích hoạt như sau:
-
-<Directory /web/htdocs/asis>
-SetHandler send-as-is
-</Directory>
-
-Khi đó tất cả các file trong /web/htdocs/asis sẽ được xử lý, bất kể đuôi là gì
-
-Chú ý lập trình:
-Để thực hiện các tính năng, chúng ta sẽ bổ sung vào bằng cách dùng Apache API , cụ thể, chúng ta sẽ thêm vào cấu trúc request_rec theo cấu trúc:
-
-Char*handler;
 
 Nếu muốn có một modul tham gia vào xử lý, thiết lập thêm r->handler, và phải thêm vào trước khi trình xử lý invoke_handler được yêu cầu.
 
-5.    Modules
+##5. Modules
 
-Các mdoul được cài đặt sẵn trong quá trinh buil Apache, hoặc có thể add thêm.
+- Các module được cài đặt sẵn trong quá trinh buil Apache, hoặc có thể add thêm.
 
-Mặc định sẵn sẽ có các modules như sau – các modul này sẽ hoạt động lần lượt theo request của người dùng (6 bước, xem lại ở mục 2 – request processing)
+- Mặc định sẵn sẽ có các modules như sau – các modul này sẽ hoạt động lần lượt theo request của người dùng (6 bước, xem lại ở mục 2 – request processing)
 
-1, chuyển đổi giữa các URI thành filename trên server:
+###5.1 chuyển đổi giữa các URI thành filename trên server:
+
 Mod_userdir: chuyển thư mục home cho từng user
 Mod_rewrite: điều chỉnh lại đường dẫn URL
-2, Giai đoạn Xác thực/ Phân quyền:
+
+###5.2 Giai đoạn Xác thực/ Phân quyền:
+
 Mod_ahth, mod_auth_anon, mod_auth_db, mod_ahth_dbm: các kiểu xác thực người dùng
 Mod_access: kiểm soát truy cập theo từng host
-3, Xác định MIME của đối tượng được truy vấn:
+
+###5.3, Xác định MIME của đối tượng được truy vấn:
+
 Mod_mime: xác định loại file bằng cách dựa vào phần mở rộng
 Mod_mime_magic: xác định loại file bằng cách sử dụng magic number
-4, chỉnh sửa đường dẫn:
+
+###5.4, chỉnh sửa đường dẫn:
+
 Mod_alias: thay thế alias bằng đường dẫn thực trên server
 Mod_env: thay đổi các tham số hệ thống dựa trên thông tin trong file cấu hình
 Mod_spelling: tự động sửa lỗi trông URL
-5, gửi trả lại cho clinet
+
+###5.5, gửi trả lại cho clinet
+
 Mod_actions: các scrip cho từng loại file sẽ được thực thi
 Mod_asis: gửi file nguyên dạng
 Mod_autoindex:
@@ -208,24 +196,27 @@ Mod_cgi: gọi scrip CGI và trả lại kết quả
 Mod_include:
 Mod_dir: xử lý về thư mục
 Mod_imap: xử lý về image-map file
-6, ghi log:
+
+###5.6, ghi log:
+
 Mod_log_*: các modul log khác nhau
+
+
+##6.    Apache configuration File
 Gồm 3 thành phần chính:
 1, Global Evironment: các thông số để cấu hình điều khiển hoạt động của toàn bộ ApacheServer
 2, Các directive định nghĩa các thông số của “main” hay “default” server
-6.    Apache configuration File
-
-Khi một request đến Apache server mà không được virtual host nào xử lý thì các thông số này sẽ quyết định hành động của ApacheServer. Các tham số này cũng đồng thời xác lập các giá trị mậc định cho tất cả các Virtual host
-
 3, Các tham số riêng cho từng virtual host
-6.1 Config/ Global enviroment:
+
+###6.1 Config/ Global enviroment:
 
 1, ServerToken & ServerSignature
+
 ServerSignature Off
 
 ServerTokens Prod
 
-Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên server (chỉ là giảm thôi nhá)
+Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên server.
 
 2, Server Root: cấu hình thư mục lưu trữ chính của Apache
 3, PidFile: thông số này lưu trữ đường dẫn đến file httpd.pid, là file lưu trữ process ID của Apache mỗi khi khởi chạy. Mặc định, file này nằm ở /etc/httpd/run/httpd.pid và trong đó chỉ có 1 con số (ví dụ: 1231)
