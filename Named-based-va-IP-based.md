@@ -69,34 +69,3 @@ Site Website2.dev
 
 ##Cấu hình IP based virtual host:
 
-**Chuẩn bị**
-<ServerRoot>/public_html/ipbased/web1/index.html
-               <html><body><h1>IP based: Website 1</h1></body></html> 
-<ServerRoot>/public_html/ipbased/web2/index.html
-               <html><body><h1>IP based: Website 2</h1></body></html> 
-
-- Mỗi website khi này cần các IP khác nhau. Tôi không muốn mua thêm NIC (Network Interface Card). Tôi sẽ cấu hình IP alias trên một interface để tăng số IP gán trên interface này.
-
-sudo ifconfig vboxnet0:0 192.168.56.2 up
-
-Kiểm tra lại bằng ifconfig, bạn sẽ thấy có một alias IP 192.168.56.2 gán trên sub interface vboxnet0:0
-
-Để hủy IP alias, bạn dùng:
-
-sudo ifconfig vboxnet0:0 192.168.56.2 down 
-
-Cấu hình để apache server host hai website kể trên:
-
-vi <ServerRoot>/conf/httpd.conf
-
-Listen 80
-
-<VirtualHost 192.168.56.1:80>
-   ServerName web1.ipbased.example.com
-   DocumentRoot <ServerRoot>/public_html/ipbased/web1/
-</VirtualHost>
-
-<VirtualHost 192.168.56.2:80>
-   ServerName web2.ipbased.example.com
-   DocumentRoot <ServerRoot>/public_html/ipbased/web2/
-</VirtualHost>
