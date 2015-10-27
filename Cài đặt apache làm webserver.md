@@ -200,13 +200,12 @@ Mod_imap: xử lý về image-map file
 ###5.6, ghi log:
 
 Mod_log_*: các modul log khác nhau
-
-
-##6.    Apache configuration File
 Gồm 3 thành phần chính:
 1, Global Evironment: các thông số để cấu hình điều khiển hoạt động của toàn bộ ApacheServer
 2, Các directive định nghĩa các thông số của “main” hay “default” server
 3, Các tham số riêng cho từng virtual host
+
+##6.    Apache configuration File
 
 ###6.1 Config/ Global enviroment:
 
@@ -224,19 +223,17 @@ Giảm nguy cơ bị lộ thông tin về phiên bản Apache đang chạy trên
 5, KeepAlive
 KeepAlive là một hình thức có thể giúp tăng tốc độ tải trang khi không mở kết nối cho từng request một. Tuy nhiên, khi bị tấn công Ddos, thì nên tắt chắc năng này để giảm thiểu ảnh hưởng tới hệ thống. Nhưng với CDN thì có lẽ nên bật vì số lượng Edge rõ lắm. Thông số KeepAlive cho phép kiểu kết nối này được bật hay không.
 
-Thông số KeepAliveTimeOut
 
 6, Listen: cấu hình địa chỉ IP và port để Apache nhận các gói request
 7, LoadModul: gọi modul nào sẽ khởi động cùng hệ thống
 8, Include: cấu hình thư mục chứa file config
-1, ServerAdmin: cấu hình địa chỉ email của người quản trị, sẽ hiển thị trên một số trang (như trang báo lỗi 404)
+	
+	1, ServerAdmin: cấu hình địa chỉ email của người quản trị, sẽ hiển thị trên một số trang (như trang báo lỗi 404)
 2, UseCanonicalName: thông thường, khi sử dụng Name-based Virutal Host thì nên set là off – không hỉu
 3, DocumentRoot: thư mục lưu trữ các đường dẫn chứa mã nguồn của website, các requet từ clinet sẽ chỉ truy xuất thông tin từ thư mục này.
 Windows: c:/wampp/www
 Centos: /var/www/html/
 4, DirectoryIndex: chỉ định file mặc định được trả về cho clinet khi có request tới một thư mục nào đó, thông thường các file như index.html, index.php sẽ được sử dụng.
-6.2 Config/ Main Server Configuration
-
 DirectoryIndex index.htm index.html index.html.var
 5, AccessFileName: chỉ định file bổ sung các cấu hình riêng cho từng thư mục nhất định. Thông thường sẽ là file “.htaccess” – file này trong mỗi virutalhost sẽ có, nói lên việc truy cập, blah blah…
 6, TypesConfig: chỉ đường dẫn tới file mime.types. File này sẽ giúp cho Apache tra cứu phần mở rộng của file để xác định MIME type trong HTTP Header (xem lại phần ví dụ handler)
@@ -265,7 +262,7 @@ Các vitual host được thực hiện trong file httpd.conf hoặc file httpd-
 Server name
 Đường dẫn tới log
 
-6.4 Một số trường – cấu hình apache server
+###6.2 Một số trường – cấu hình apache server
 
 Các thông số trong http.conf
 Server Root: chỉ dẫn vị trí cài đặt Apache
@@ -292,7 +289,7 @@ Cú pháp:ErrorLog <vị trí log>
 Alias:ánh xạ đường dẫn cục bộ(không nằm trong document) thành đường dẫn địa chỉ URL
 Cú pháp:alias<đường dẫn http><đường dẫn cục bộ>
 
-7.    Mutiprocessing
+##7.    Mutiprocessing
 
 Có 2 khái niệm về khả năng xử lý của webserver
 
@@ -304,3 +301,4 @@ Multi-thread: tạo Thread mới cho từng request
 Worker: tạo các thread riêng biệt cho request, hợp với đa lõi, nhưng nếu có 1 thread bị lỗi sẽ có thể gây ảnh hưởng tới các thread trong cùng process đó
 Đánh giá chung: Thread thì tiết kiệm tài nguyên hơn là Process. Nhưng còn tùy thuộc vào các yếu tố khác nhau, ví dụ PHP thì nên dùng Prefork, vì nó không ổn định với hình thức chia sẻ bộ nhớ chung (Process thì sẽ tạo tài nguyên riêng cho từng process, nên sẽ không bị ảnh hưởng khi dùng PHP). (Thread dùng chung bộ nhớ, tài nguyên à ảnh hưởng)
 
+( tra thêm tài liệu để hiểu rõ sự khác biệt giữa process và thread)
